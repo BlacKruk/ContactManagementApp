@@ -9,12 +9,14 @@ import cma.api.repository.ContactManagementAppRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 @Service
 public class CMAService {
-
     private final CMAMapper cmaMapper;
     private final ContactManagementAppRepository contactManagementAppRepository;
     private Contact singleContact;
@@ -64,7 +66,7 @@ public class CMAService {
 
     }
 
-    public ReturnContactDTO saveContact(CreateContactDTO contactDTO) {
+    public ReturnContactDTO saveContact(@Valid CreateContactDTO contactDTO) {
 
         Contact newContact = cmaMapper.convertCreateContactDTOToAnEntity(contactDTO);
         saveOrUpdateContact(newContact);
