@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
+
 
 @RestController
 public class CMAController {
@@ -24,19 +27,9 @@ public class CMAController {
         this.cmaMapper = cmaMapper;
         this.repository = repository;
     }
-
-    @GetMapping("/greetings")
-    public String getHelloWorld(String name) {
-        name = "Hello World!";
-        return name;
-    }
-
     @PostMapping("/contacts")
     public ResponseEntity<ReturnContactDTO> saveContact(@RequestBody CreateContactDTO contactDto) {
 
-        if (contactDto.getFirstName() == null || contactDto.getLastName() == null || contactDto.getDateOfBirth() == null || contactDto.getAddress() == null || contactDto.getMobileNumber() == null) {
-            return ResponseEntity.badRequest().build();
-        }
         return new ResponseEntity<>(contactService.saveContact(contactDto), HttpStatus.CREATED);
     }
 
