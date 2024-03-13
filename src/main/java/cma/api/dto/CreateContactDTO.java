@@ -1,15 +1,25 @@
 package cma.api.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 import java.time.LocalDate;
-
+@Data
 public class CreateContactDTO {
 
+    @NotNull(message = "you have to provide a value")
     private Integer id;
+    @NotNull(message = "you have to provide a value")
     private String firstName;
+    @NotNull(message = "you have to provide a value")
     private String lastName;
+    @NotNull(message = "you have to provide a value")
     private LocalDate dateOfBirth;
+    @NotNull(message = "you have to provide a value")
     private String address;
+    @NotNull(message = "you have to provide a value")
     private Integer mobileNumber;
+
 
     public CreateContactDTO() {
         id = 0;
