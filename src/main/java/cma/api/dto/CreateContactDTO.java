@@ -7,17 +7,24 @@ import java.time.LocalDate;
 @Data
 public class CreateContactDTO {
 
-    @NotNull(message = "you have to provide a value")
+    @NotNull(message = "The Id cannot be null")
     private Integer id;
-    @NotNull(message = "you have to provide a value")
+
+    @NotBlank(message = "First Name cannot be empty")
+    @NotNull(message = "First Name cannot be null")
     private String firstName;
-    @NotNull(message = "you have to provide a value")
+
+    @NotBlank(message = "Last Name cannot be empty")
+    @NotNull(message = "Last Name cannot be null")
     private String lastName;
-    @NotNull(message = "you have to provide a value")
+
+    @NotNull(message = "Date of Birth cannot be null")
     private LocalDate dateOfBirth;
-    @NotNull(message = "you have to provide a value")
+    @NotBlank(message = "Adress cannot be empty")
+    @NotNull(message = "Adress cannot be null")
     private String address;
-    @NotNull(message = "you have to provide a value")
+
+    @NotNull(message = "Mobile Number cannot be null")
     private Integer mobileNumber;
 
 
