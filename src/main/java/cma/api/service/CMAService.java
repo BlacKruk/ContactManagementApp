@@ -8,13 +8,13 @@ import cma.api.model.Contact;
 import cma.api.repository.ContactManagementAppRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 
-@Validated
 @Service
 public class CMAService {
     private final CMAMapper cmaMapper;
@@ -44,7 +44,10 @@ public class CMAService {
         return contactManagementAppRepository.save(contact);
     }
 
+
     public void deleteContact(int id) {
+
+        contactManagementAppRepository.findById(id).orElseThrow(() -> new ContactNotFoundException("Contact Not Found"));
         contactManagementAppRepository.deleteById(id);
     }
 
@@ -66,7 +69,7 @@ public class CMAService {
 
     }
 
-    public ReturnContactDTO saveContact(@Valid CreateContactDTO contactDTO) {
+      public ReturnContactDTO saveContact(CreateContactDTO contactDTO) {
 
         Contact newContact = cmaMapper.convertCreateContactDTOToAnEntity(contactDTO);
         saveOrUpdateContact(newContact);
