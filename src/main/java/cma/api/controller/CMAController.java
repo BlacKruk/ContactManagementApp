@@ -7,10 +7,10 @@ import cma.api.repository.ContactManagementAppRepository;
 import cma.api.service.CMAService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
 
 @Validated
 @RestController
@@ -25,17 +25,19 @@ public class CMAController {
         this.cmaMapper = cmaMapper;
         this.repository = repository;
     }
-    @PostMapping("/contacts")
-    @ResponseStatus(value = HttpStatus.OK)
-    public ReturnContactDTO saveContact(@Valid @RequestBody CreateContactDTO contactDto) {
 
-       return contactService.saveContact(contactDto);
+    @PostMapping("/contacts")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ReturnContactDTO saveContact(@Validated @RequestBody CreateContactDTO contactDto, BindingResult errors) {
+
+        return contactService.saveContact(contactDto, errors);
     }
 
     @GetMapping("/contacts/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public ReturnContactDTO getContact(@PathVariable("id") Integer id) {
-            return contactService.getContact(id);
+
+        return contactService.getContact(id);
     }
 
     @GetMapping("/contacts")
@@ -46,15 +48,16 @@ public class CMAController {
     }
 
     @PutMapping("/contacts/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public ReturnContactDTO update( @PathVariable("id") int id,@Valid @RequestBody CreateContactDTO contactDto) {
-            return contactService.updateContact(id, contactDto);
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ReturnContactDTO update(@PathVariable("id") int id, @Validated @RequestBody CreateContactDTO contactDto, BindingResult errors) {
+
+        return contactService.updateContact(id, contactDto, errors);
     }
 
     @DeleteMapping("/contacts/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteContact(@PathVariable("id") int id) {
 
-            contactService.deleteContact(id);
+        contactService.deleteContact(id);
     }
 }
