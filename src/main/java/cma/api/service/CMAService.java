@@ -3,35 +3,37 @@ package cma.api.service;
 import cma.api.dto.CreateContactDTO;
 import cma.api.dto.ReturnContactDTO;
 import cma.api.exceptions.ContactNotFoundException;
+import cma.api.exceptions.ValidationException;
 import cma.api.mapper.CMAMapper;
 import cma.api.model.Contact;
 import cma.api.repository.ContactManagementAppRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.BindingResult;
+
 
 @Service
 public class CMAService {
+
     private final CMAMapper cmaMapper;
     private final ContactManagementAppRepository contactManagementAppRepository;
-    private Contact singleContact;
-    private List<Contact> listOfContacts;
+
 
     @Autowired
     public CMAService(CMAMapper cmaMapper, ContactManagementAppRepository contactManagementAppRepository) {
         this.cmaMapper = cmaMapper;
         this.contactManagementAppRepository = contactManagementAppRepository;
+
     }
 
     public List<Contact> getContactsFromRepository() {
-        List<Contact> listOfContacts = new ArrayList<>();
 
-        contactManagementAppRepository.findAll().forEach(listOfContacts::add);
+        List<Contact> listOfContacts = new ArrayList<>();
+        contactManagementAppRepository.findAll();
 
         return listOfContacts;
     }
@@ -44,32 +46,32 @@ public class CMAService {
         return contactManagementAppRepository.save(contact);
     }
 
-
     public void deleteContact(int id) {
 
         contactManagementAppRepository.findById(id).orElseThrow(() -> new ContactNotFoundException("Contact Not Found"));
         contactManagementAppRepository.deleteById(id);
     }
 
-    public ReturnContactDTO updateContact(int id, CreateContactDTO contactDTO) {
+    public ReturnContactDTO updateContact(int id, CreateContactDTO contactDTO, BindingResult errors) {
+
+        checkIfTheMethodIsThrowingAnException(errors);
 
         var originalContact = getContactById(id);
-
         Contact newContact = cmaMapper.convertCreateContactDTOToAnEntity(contactDTO);
-
         originalContact.setFirstName(newContact.getFirstName());
         originalContact.setLastName(newContact.getLastName());
         originalContact.setDateOfBirth(newContact.getDateOfBirth());
         originalContact.setAddress(newContact.getAddress());
         originalContact.setMobileNumber(newContact.getMobileNumber());
-
         saveOrUpdateContact(originalContact);
 
         return cmaMapper.convertAnEntityToReturnContactDTO(originalContact);
 
     }
 
-      public ReturnContactDTO saveContact(CreateContactDTO contactDTO) {
+    public ReturnContactDTO saveContact(CreateContactDTO contactDTO, BindingResult errors) {
+
+        checkIfTheMethodIsThrowingAnException(errors);
 
         Contact newContact = cmaMapper.convertCreateContactDTOToAnEntity(contactDTO);
         saveOrUpdateContact(newContact);
@@ -115,25 +117,39 @@ public class CMAService {
 
     public List<ReturnContactDTO> filterContactsUsingJPAQueryMethods(String firstName, String lastName) {
 
-        List<ReturnContactDTO> result = null;
-
         if (firstName == null && lastName == null) {
 
-            result = cmaMapper.convertAnEntityListToReturnContactDTOList(contactManagementAppRepository.findAll());
+            return cmaMapper.convertAnEntityListToReturnContactDTOList(contactManagementAppRepository.findAll());
 
-        } else if (firstName != null && lastName == null) {
-
-            result = filterContactsByFirstName(firstName);
-
-        } else if (firstName == null) {
-
-            result = filterContactsByLastName(lastName);
-
-        } else if (firstName != null && lastName != null) {
-
-            result = filterContactsByFirstNameAndLastName(firstName, lastName);
         }
 
-        return result;
+        if (firstName != null && lastName == null) {
+
+            return filterContactsByFirstName(firstName);
+
+        }
+
+        if (firstName == null) {
+
+            return filterContactsByLastName(lastName);
+
+        }
+
+        if (firstName != null && lastName != null) {
+
+            return filterContactsByFirstNameAndLastName(firstName, lastName);
+        }
+        else {
+            return Collections.<ReturnContactDTO>emptyList();
+        }
+
+    }
+
+    public void checkIfTheMethodIsThrowingAnException(BindingResult errors) {
+
+        if (errors.hasErrors()) {
+            throw new ValidationException(errors);
+        }
+
     }
 }
