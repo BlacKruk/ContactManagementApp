@@ -1,7 +1,6 @@
 package cma.api.dto;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import java.time.LocalDate;
 @Data
