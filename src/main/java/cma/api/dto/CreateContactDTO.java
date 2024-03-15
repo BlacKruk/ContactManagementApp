@@ -7,26 +7,22 @@ import java.time.LocalDate;
 @Data
 public class CreateContactDTO {
 
-    @NotNull(message = "The Id cannot be null")
+    @NotNull(message = "The id field cannot be null")
     private Integer id;
 
-    @NotBlank(message = "First Name cannot be empty")
-    @NotNull(message = "First Name cannot be null")
+    @NotNull(message = "firstName field cannot be null")
     private String firstName;
 
-    @NotBlank(message = "Last Name cannot be empty")
-    @NotNull(message = "Last Name cannot be null")
+    @NotNull(message = "lastName field cannot be null")
     private String lastName;
 
-    @NotNull(message = "Date of Birth cannot be null")
+    @NotNull(message = "dateOfBirth field cannot be null")
     private LocalDate dateOfBirth;
-    @NotBlank(message = "Adress cannot be empty")
-    @NotNull(message = "Adress cannot be null")
+    @NotNull(message = "address field cannot be null")
     private String address;
 
-    @NotNull(message = "Mobile Number cannot be null")
+    @NotNull(message = "mobileNumber field cannot be null")
     private Integer mobileNumber;
-
 
     public CreateContactDTO() {
         id = 0;
