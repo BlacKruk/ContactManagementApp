@@ -3,7 +3,6 @@ package cma.api.service;
 import cma.api.dto.CreateContactDTO;
 import cma.api.dto.ReturnContactDTO;
 import cma.api.exceptions.ContactNotFoundException;
-import cma.api.exceptions.ValidationException;
 import cma.api.mapper.CMAMapper;
 import cma.api.model.Contact;
 import cma.api.repository.ContactManagementAppRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.springframework.validation.BindingResult;
 
 
 @Service
@@ -52,9 +50,9 @@ public class CMAService {
         contactManagementAppRepository.deleteById(id);
     }
 
-    public ReturnContactDTO updateContact(int id, CreateContactDTO contactDTO, BindingResult errors) {
+    public ReturnContactDTO updateContact(int id, CreateContactDTO contactDTO) {
 
-        checkIfTheMethodIsThrowingAnException(errors);
+
 
         var originalContact = getContactById(id);
         Contact newContact = cmaMapper.convertCreateContactDTOToAnEntity(contactDTO);
@@ -69,9 +67,8 @@ public class CMAService {
 
     }
 
-    public ReturnContactDTO saveContact(CreateContactDTO contactDTO, BindingResult errors) {
+    public ReturnContactDTO saveContact(CreateContactDTO contactDTO) {
 
-        checkIfTheMethodIsThrowingAnException(errors);
 
         Contact newContact = cmaMapper.convertCreateContactDTOToAnEntity(contactDTO);
         saveOrUpdateContact(newContact);
@@ -145,11 +142,4 @@ public class CMAService {
 
     }
 
-    public void checkIfTheMethodIsThrowingAnException(BindingResult errors) {
-
-        if (errors.hasErrors()) {
-            throw new ValidationException(errors);
-        }
-
-    }
 }
