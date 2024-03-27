@@ -5,6 +5,7 @@ import cma.api.dto.ReturnContactDTO;
 import cma.api.mapper.CMAMapper;
 import cma.api.repository.ContactManagementAppRepository;
 import cma.api.service.CMAService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -28,9 +29,9 @@ public class CMAController {
 
     @PostMapping("/contacts")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ReturnContactDTO saveContact(@Validated @RequestBody CreateContactDTO contactDto, BindingResult errors) {
+    public ReturnContactDTO saveContact(@Valid @RequestBody CreateContactDTO contactDto) {
 
-        return contactService.saveContact(contactDto, errors);
+        return contactService.saveContact(contactDto);
     }
 
     @GetMapping("/contacts/{id}")
@@ -49,9 +50,9 @@ public class CMAController {
 
     @PutMapping("/contacts/{id}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ReturnContactDTO update(@PathVariable("id") int id, @Validated @RequestBody CreateContactDTO contactDto, BindingResult errors) {
+    public ReturnContactDTO update(@PathVariable("id") int id, @Valid @RequestBody CreateContactDTO contactDto) {
 
-        return contactService.updateContact(id, contactDto, errors);
+        return contactService.updateContact(id, contactDto);
     }
 
     @DeleteMapping("/contacts/{id}")
