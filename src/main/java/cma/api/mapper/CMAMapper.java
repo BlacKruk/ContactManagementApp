@@ -7,7 +7,6 @@ import cma.api.dto.ContactDTO;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 
@@ -44,22 +43,7 @@ public class CMAMapper {
         return returnContactDtoList;
     }
 
-    class Test {
-        public Optional<String> foo() {
-            return Optional.of("Hello");
-        }
-    }
-
-    public Optional<Test> getTest() {
-        return Optional.of(new Test());
-    }
-
     public List<ReturnContactDTO> convertAnEntityListToReturnContactDTOListFoo(List<Contact> listOfContacts) {
-        var fooLength = getTest()
-                .flatMap(Test::foo)
-                .map(String::length)
-                .orElse(0);
-
 
          return listOfContacts.stream()
                 .map(this::convertAnEntityToReturnContactDTO)
