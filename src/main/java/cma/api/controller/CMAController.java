@@ -2,16 +2,17 @@ package cma.api.controller;
 
 import cma.api.dto.CreateContactDTO;
 import cma.api.dto.ReturnContactDTO;
-import cma.api.exceptions.ContactNotFoundException;
 import cma.api.mapper.CMAMapper;
 import cma.api.repository.ContactManagementAppRepository;
 import cma.api.service.CMAService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 @RestController
 public class CMAController {
     private final CMAService contactService;
@@ -25,61 +26,38 @@ public class CMAController {
         this.repository = repository;
     }
 
-    @GetMapping("/greetings")
-    public String getHelloWorld(String name) {
-        name = "Hello World!";
-        return name;
-    }
-
     @PostMapping("/contacts")
-    public ResponseEntity<ReturnContactDTO> saveContact(@RequestBody CreateContactDTO contactDto) {
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ReturnContactDTO saveContact(@Valid @RequestBody CreateContactDTO contactDto) {
 
-        if (contactDto.getFirstName() == null || contactDto.getLastName() == null || contactDto.getDateOfBirth() == null || contactDto.getAddress() == null || contactDto.getMobileNumber() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        return new ResponseEntity<>(contactService.saveContact(contactDto), HttpStatus.CREATED);
+        return contactService.saveContact(contactDto);
     }
 
     @GetMapping("/contacts/{id}")
-    public ResponseEntity<ReturnContactDTO> getContact(@PathVariable("id") Integer id) {
-        try {
-            return new ResponseEntity<>(contactService.getContact(id), HttpStatus.OK);
-        } catch (ContactNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @ResponseStatus(value = HttpStatus.OK)
+    public ReturnContactDTO getContact(@PathVariable("id") Integer id) {
+
+        return contactService.getContact(id);
     }
 
     @GetMapping("/contacts")
-    public ResponseEntity<List<ReturnContactDTO>> getContacts(@RequestParam(value = "firstName", required = false) String firstName, @RequestParam(value = "lastName", required = false) String lastName) {
-        return new ResponseEntity<>(contactService.filterContactsUsingJPAQueryMethods(firstName, lastName), HttpStatus.OK);
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<ReturnContactDTO> getContacts(@RequestParam(value = "firstName", required = false) String firstName, @RequestParam(value = "lastName", required = false) String lastName) {
+
+        return contactService.filterContactsUsingJPAQueryMethods(firstName, lastName);
     }
 
     @PutMapping("/contacts/{id}")
-    public ResponseEntity<ReturnContactDTO> update(@PathVariable("id") int id, @RequestBody CreateContactDTO contactDto) {
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ReturnContactDTO update(@PathVariable("id") int id, @Valid @RequestBody CreateContactDTO contactDto) {
 
-        try {
-
-            if (contactDto.getFirstName() == null || contactDto.getLastName() == null || contactDto.getDateOfBirth() == null || contactDto.getAddress() == null || contactDto.getMobileNumber() == null) {
-                return ResponseEntity.badRequest().build();
-            }
-
-            return new ResponseEntity<>(contactService.updateContact(id, contactDto), HttpStatus.OK);
-
-        } catch (ContactNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return contactService.updateContact(id, contactDto);
     }
 
     @DeleteMapping("/contacts/{id}")
-    public ResponseEntity<Void> deleteContact(@PathVariable("id") int id) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteContact(@PathVariable("id") int id) {
 
-        try {
-            contactService.deleteContact(id);
-            return ResponseEntity.noContent().build();
-
-        } catch (ContactNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-
+        contactService.deleteContact(id);
     }
 }

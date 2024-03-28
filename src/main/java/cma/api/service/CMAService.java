@@ -9,27 +9,29 @@ import cma.api.repository.ContactManagementAppRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class CMAService {
 
     private final CMAMapper cmaMapper;
     private final ContactManagementAppRepository contactManagementAppRepository;
-    private Contact singleContact;
-    private List<Contact> listOfContacts;
+
 
     @Autowired
     public CMAService(CMAMapper cmaMapper, ContactManagementAppRepository contactManagementAppRepository) {
         this.cmaMapper = cmaMapper;
         this.contactManagementAppRepository = contactManagementAppRepository;
+
     }
 
     public List<Contact> getContactsFromRepository() {
-        List<Contact> listOfContacts = new ArrayList<>();
 
-        contactManagementAppRepository.findAll().forEach(listOfContacts::add);
+        List<Contact> listOfContacts = new ArrayList<>();
+        contactManagementAppRepository.findAll();
 
         return listOfContacts;
     }
@@ -43,21 +45,21 @@ public class CMAService {
     }
 
     public void deleteContact(int id) {
+
+        contactManagementAppRepository.findById(id).orElseThrow(() -> new ContactNotFoundException("Contact Not Found"));
         contactManagementAppRepository.deleteById(id);
     }
 
     public ReturnContactDTO updateContact(int id, CreateContactDTO contactDTO) {
 
+
         var originalContact = getContactById(id);
-
         Contact newContact = cmaMapper.convertCreateContactDTOToAnEntity(contactDTO);
-
         originalContact.setFirstName(newContact.getFirstName());
         originalContact.setLastName(newContact.getLastName());
         originalContact.setDateOfBirth(newContact.getDateOfBirth());
         originalContact.setAddress(newContact.getAddress());
         originalContact.setMobileNumber(newContact.getMobileNumber());
-
         saveOrUpdateContact(originalContact);
 
         return cmaMapper.convertAnEntityToReturnContactDTO(originalContact);
@@ -65,6 +67,7 @@ public class CMAService {
     }
 
     public ReturnContactDTO saveContact(CreateContactDTO contactDTO) {
+
 
         Contact newContact = cmaMapper.convertCreateContactDTOToAnEntity(contactDTO);
         saveOrUpdateContact(newContact);
@@ -110,25 +113,25 @@ public class CMAService {
 
     public List<ReturnContactDTO> filterContactsUsingJPAQueryMethods(String firstName, String lastName) {
 
-        List<ReturnContactDTO> result = null;
-
         if (firstName == null && lastName == null) {
 
-            result = cmaMapper.convertAnEntityListToReturnContactDTOList(contactManagementAppRepository.findAll());
+            return cmaMapper.convertAnEntityListToReturnContactDTOList(contactManagementAppRepository.findAll());
 
-        } else if (firstName != null && lastName == null) {
-
-            result = filterContactsByFirstName(firstName);
-
-        } else if (firstName == null) {
-
-            result = filterContactsByLastName(lastName);
-
-        } else if (firstName != null && lastName != null) {
-
-            result = filterContactsByFirstNameAndLastName(firstName, lastName);
         }
 
-        return result;
+        if (firstName != null && lastName == null) {
+
+            return filterContactsByFirstName(firstName);
+
+        }
+
+        if (firstName == null) {
+
+            return filterContactsByLastName(lastName);
+
+        }
+
+        return filterContactsByFirstNameAndLastName(firstName, lastName);
+
     }
 }

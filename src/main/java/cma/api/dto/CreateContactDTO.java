@@ -1,14 +1,26 @@
 package cma.api.dto;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import java.time.LocalDate;
-
+@Data
 public class CreateContactDTO {
 
+    @NotNull(message = "The id field cannot be null")
     private Integer id;
+
+    @NotNull(message = "firstName field cannot be null")
     private String firstName;
+
+    @NotNull(message = "lastName field cannot be null")
     private String lastName;
+
+    @NotNull(message = "dateOfBirth field cannot be null")
     private LocalDate dateOfBirth;
+    @NotNull(message = "address field cannot be null")
     private String address;
+
+    @NotNull(message = "mobileNumber field cannot be null")
     private Integer mobileNumber;
 
     public CreateContactDTO() {
