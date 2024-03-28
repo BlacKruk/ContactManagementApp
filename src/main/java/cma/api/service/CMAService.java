@@ -9,8 +9,8 @@ import cma.api.repository.ContactManagementAppRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -51,7 +51,6 @@ public class CMAService {
     }
 
     public ReturnContactDTO updateContact(int id, CreateContactDTO contactDTO) {
-
 
 
         var originalContact = getContactById(id);
@@ -132,14 +131,7 @@ public class CMAService {
 
         }
 
-        if (firstName != null && lastName != null) {
-
-            return filterContactsByFirstNameAndLastName(firstName, lastName);
-        }
-        else {
-            return Collections.<ReturnContactDTO>emptyList();
-        }
+        return filterContactsByFirstNameAndLastName(firstName, lastName);
 
     }
-
 }
